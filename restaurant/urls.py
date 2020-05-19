@@ -4,8 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', views.index, name='main'),
-    path('order/', views.order, name='order')
+    path('', views.index, name='main')
 ]
 
 if settings.DEBUG:

@@ -1,41 +1,30 @@
+{% load static %}
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('.ui.dropdown').dropdown();
-        });
-        $(document).ready(function () {
-            $('.special.cards .image').dimmer({
-                on: 'hover'
-            });
-        });
-    </script>
 </head>
 <body>
     <!-- Image and text -->
     <div class="ui borderless inverted huge menu" style="border-radius:0">
         <div class="ui container">
-            <div class="item">
-                <i class="coffee icon"></i>
-            </div>
             <a class="item" href={% url 'main' %}>
-                Pizza Pizza
+                <img src={% static '../static/restaurant/images/pizza.svg' %}>
+                <span style="margin-left: 1rem">Pizza Pizza</span>
             </a>
             
             <div class="right menu">
                 <div class="ui simple dropdown item" id="dropdownCart">
-                    <i class="opencart icon"></i>
+                    <i class="large opencart icon"></i>
                     <span class="textCart"></span>
                     <div class="menu" id="menucart">
                         <div class="item">
                             <div class="ui buttons">
-                                <a href={% url 'order' %} class="ui positive button">Buy</a>
+                                <a class="ui positive button">Buy</a>
                                 <div class="or"></div>
-                                <button class="ui negative button">Clear</button>
+                                <button onclick=clearCart() class="ui negative button">Clear</button>
                             </div>
                         </div>
                     </div>
@@ -44,7 +33,21 @@
         </div>
     </div>
     
-    
+    <div class="ui basic modal">
+        <div class="ui icon header">
+            <i class="thumbs up icon"></i>
+            Siparişiniz başarıyla alındı.
+        </div>
+        <div class="actions" style="text-align:center">
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Thank you for order.
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="ui container">
         {% block content %}
         {% endblock  %}
@@ -102,8 +105,8 @@
         
         function displayCart(a, b) {
             var output = "" 
-            output += '<div class="item" style="display:flex; pointer-events: none;">'+
-                    '<span class="text">'+a+'</span>'
+            output += '<div class="item removable" style="display:flex; pointer-events: none;">'+
+                    '<span class="text removable">'+a+'</span>'
                     +'<br>'+
                         '<span class="description">'+b+'</span>'+
                     
@@ -120,8 +123,22 @@
             textCart[0].innerText = total_price + " ₺"
             $('#menucart').prepend(displayCart(ters[0], price));
         }
-
-
+        function clearCart() {
+            $("div").remove(".removable")
+            textCart[0].innerText = ""
+            total_price = 0
+        }
+        $(document).ready(function(){
+            $('.ui.dropdown').dropdown();
+        });
+        $(document).ready(function() {
+            $('.ui.positive.button').click(function(){
+                if ($('.textCart').text() != "") {
+                    $('.ui.basic.modal').modal('show');
+                    clearCart()
+                }
+            })
+        })
     </script>
 </body>
 </html>
