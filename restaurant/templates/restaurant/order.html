@@ -1,0 +1,66 @@
+{% extends 'restaurant/index.html' %}
+{% block content %}
+    <div class="ui internally celled grid" style="margin-top: 3rem; margin-bottom: 3rem;">
+        <div class="row">
+            <div class="ten wide column">
+                <form class="ui form" method="POST" action="#">
+                    {% csrf_token %}
+                    <h4 class="ui divided header">Shipping Information</h4>
+                    <div class="field">
+                        <label>Name</label>
+                        <div class="two fields">
+                            <div class="field">
+                                <input type="text" name="shipping[first-name]" placeholder="First Name">
+                            </div>
+                            <div class="field">
+                                <input type="text" name="shipping[last-name]" placeholder="Last Name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Contact</label>
+                        <div class="two fields">
+                            <div class="field">
+                                <input type="email" name="shipping[email]" placeholder="Email">
+                            </div>
+                            <div class="field">
+                                <input type="tel" name="shipping[phone]" placeholder="Phone Number">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="field">
+                            <input type="text" name="shipping[address]" placeholder="Street Address">
+                        </div>
+                    </div>
+                    <button class="ui olive button" type="submit" name="newOrder" value="newOrder">Order</button>
+                </form>
+            </div>
+            <div class="six wide column" style="display: grid; align-items:center;">
+                <div class="ui massive middle aligned divided list" >
+                    <div class="item">
+                        <div class="content">
+                            Döner
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            Döner
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            Döner
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="content">
+                            Döner
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
