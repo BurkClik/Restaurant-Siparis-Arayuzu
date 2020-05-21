@@ -1,18 +1,19 @@
 {% load static %}
-<html>
+<html style="height:100%">
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet"> 
 </head>
-<body>
+<body style="min-height:100%; display:grid; grid-template-rows:1ft auto">
     <!-- Image and text -->
     <div class="ui borderless inverted huge menu" style="border-radius:0">
         <div class="ui container">
             <a class="item" href={% url 'main' %}>
                 <img src={% static '../static/restaurant/images/pizza.svg' %}>
-                <span style="margin-left: 1rem">Pizza Pizza</span>
+                <span style="margin-left: 1rem; font-family: 'Sacramento'; font-size: 28px">Bon Appétit</span>
             </a>
             
             <div class="right menu">
@@ -22,7 +23,7 @@
                     <div class="menu" id="menucart">
                         <div class="item">
                             <div class="ui buttons">
-                                <a class="ui positive button">Buy</a>
+                                <a href={% url 'order' %} class="ui positive button">Buy</a>
                                 <div class="or"></div>
                                 <button onclick=clearCart() class="ui negative button">Clear</button>
                             </div>
@@ -33,73 +34,68 @@
         </div>
     </div>
     
-    <div class="ui basic modal">
-        <div class="ui icon header">
-            <i class="thumbs up icon"></i>
-            Siparişiniz başarıyla alındı.
-        </div>
-        <div class="actions" style="text-align:center">
-            <div class="ui green ok inverted button">
-                <i class="checkmark icon"></i>
-                Thank you for order.
-            </div>
-        </div>
-    </div>
-
-
 
     <div class="ui container">
         {% block content %}
         {% endblock  %}
     </div>
 
-    <div class="ui inverted vertical footer segment" style="padding: 3rem 3rem 3rem 3rem">
+    <div class="ui inverted vertical footer segment" style="padding: 3rem 3rem 3rem 3rem; grid-row-start: 3; grid-row-end:4">
         <div class="ui container">
             <div class="ui stackable inverted divided equal height stackable grid">
-                <div class="three wide column">
-                    <h4 class="ui inverted header">About</h4>
-                    <div class="ui inverted link list">
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                    </div>
-                </div>
-                <div class="three wide column">
-                    <h4 class="ui inverted header">About</h4>
-                    <div class="ui inverted link list">
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                        <a class="item" href="#">
-                            Sitemap
-                        </a>
-                    </div>
-                </div>
                 <div class="seven wide column">
-                    <h class="ui inverted header">Footer Header</h4>
+                    <h class="ui inverted header">About</h4>
                     <p>
                         Extra space for a call to action inside the footer that could help re-engage users.
                     </p>
+                </div>
+
+                <div class="six wide column">
+                    <h4 class="ui inverted header">Social</h4>
+                    <div class="ui inverted link list">
+                        <button class="ui facebook button">
+                            <i class="facebook icon"></i>
+                            Facebook
+                        </button>
+                        <button class="ui twitter button">
+                            <i class="twitter icon"></i>
+                            Twitter
+                        </button>
+                        <button class="ui instagram button">
+                            <i class="instagram icon"></i>
+                            Instagram
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script>
+        let storeCart;
+        let count;
+        let total_price;
+        textCart = document.getElementsByClassName("textCart")
+        if (Object.keys(localStorage).length != 0) {
+            console.log("a")
+            storeCart = JSON.parse(localStorage.getItem('cart'))
+            count = localStorage.getItem('count')
+            
+            var temp = JSON.parse(localStorage.getItem('cart'))
+            for ( let i = 0; i < Object.values(temp['cart']).length; i++) {
+                $('#menucart').prepend(displayCart(Object.keys(temp['cart'][i])[0], Object.values(temp['cart'][i])[0]));
+            }
+            total_price = Number(localStorage.getItem('total_price'))
+            textCart[0].innerText = total_price + " ₺"
+        } else {
+            console.log("b")
+            storeCart = {
+                "cart": {}
+            }
+            count = 0;
+            total_price = 0;
+        }
+
+
         let a = document.getElementsByClassName("card")
         
         
@@ -113,32 +109,47 @@
                     '</div>'
             return output
         }
-        textCart = document.getElementsByClassName("textCart")
-        let total_price = 0
+
+
+
+
         function displayAlert(id) {
             let item = document.getElementById(id)
             var ters = item.innerText.split("\n");
             var price = ters[ters.length - 1]
             total_price += Number(price)
+            
+            storeCart.cart[count] = {}
+            storeCart.cart[count][ters[0]] = price
+            localStorage.setItem("cart", JSON.stringify(storeCart))
+
+            var cartJSON = JSON.parse(localStorage.getItem('cart')) 
+
             textCart[0].innerText = total_price + " ₺"
             $('#menucart').prepend(displayCart(ters[0], price));
+
+            count++
+            localStorage.setItem('count', count)
+            localStorage.setItem('total_price', total_price)
         }
+
+
         function clearCart() {
             $("div").remove(".removable")
             textCart[0].innerText = ""
             total_price = 0
+            localStorage.removeItem("cart")
+            localStorage.removeItem("count")
+            localStorage.removeItem("total_price")
+            storeCart.cart = {}
+            count = 0
         }
+
+
         $(document).ready(function(){
             $('.ui.dropdown').dropdown();
         });
-        $(document).ready(function() {
-            $('.ui.positive.button').click(function(){
-                if ($('.textCart').text() != "") {
-                    $('.ui.basic.modal').modal('show');
-                    clearCart()
-                }
-            })
-        })
+
     </script>
 </body>
 </html>

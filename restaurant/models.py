@@ -10,3 +10,15 @@ class Menu(models.Model):
 
     def __str__(self):
         return self.food_name
+
+class Order(models.Model):
+    orderer_name = models.CharField(max_length=100)
+    orderer_surname = models.CharField(max_length=100)
+    orderer_email = models.EmailField()
+    orderer_phone = models.CharField(max_length=11)
+    orderer_address = models.CharField(max_length=200)
+    order_price = models.FloatField()
+    order_detail = models.TextField(null=True)
+
+    def __str__(self):
+        return self.order_detail

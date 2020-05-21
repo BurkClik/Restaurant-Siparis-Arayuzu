@@ -1,5 +1,15 @@
 {% extends 'restaurant/index.html' %}
 {% block content %}
+    {% if messages %}
+    {% for message in messages %}
+        <div id="message_container" class="ui positive message">
+            <i class="close icon"></i>
+            <div class = "header" style="text-align:center">
+                Your order has been successfully received.
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
     <div class="ui internally celled grid" style="margin-top: 3rem; margin-bottom: 3rem;">
         <div class="row">
             <div class="ten wide column">
@@ -10,10 +20,10 @@
                         <label>Name</label>
                         <div class="two fields">
                             <div class="field">
-                                <input type="text" name="shipping[first-name]" placeholder="First Name">
+                                <input type="text" name="name" placeholder="First Name" required>
                             </div>
                             <div class="field">
-                                <input type="text" name="shipping[last-name]" placeholder="Last Name">
+                                <input type="text" name="surname" placeholder="Last Name" required>
                             </div>
                         </div>
                     </div>
@@ -21,46 +31,70 @@
                         <label>Contact</label>
                         <div class="two fields">
                             <div class="field">
-                                <input type="email" name="shipping[email]" placeholder="Email">
+                                <input type="email" name="email" placeholder="Email">
                             </div>
                             <div class="field">
-                                <input type="tel" name="shipping[phone]" placeholder="Phone Number">
+                                <input type="tel" name="phone" placeholder="Phone Number" maxlength="11" required>
                             </div>
                         </div>
                     </div>
                     <div class="field">
                         <label>Address</label>
                         <div class="field">
-                            <input type="text" name="shipping[address]" placeholder="Street Address">
+                            <input id="deneme3" type="text" name="address" placeholder="Street Address" required>
                         </div>
                     </div>
-                    <button class="ui olive button" type="submit" name="newOrder" value="newOrder">Order</button>
+                    <button id="deneme" class="ui olive button" type="submit" name="newOrder" value="newOrder" onclick=clearCart()>Order</button>
+                    <input id="deneme2" type="text" name="comeOrder" value="asds" style="display:none">
                 </form>
             </div>
             <div class="six wide column" style="display: grid; align-items:center;">
-                <div class="ui massive middle aligned divided list" >
-                    <div class="item">
-                        <div class="content">
-                            Döner
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            Döner
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            Döner
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            Döner
-                        </div>
-                    </div>
-                </div>
+                <table class="ui very basic collapsing celled table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Food</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTable">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById("deneme").attributes[4].value = Number(localStorage.getItem('total_price'))
+        
+        
+        if (JSON.parse(localStorage.getItem('cart')) != null) {
+            var temp = JSON.parse(localStorage.getItem('cart'))
+            var orders = ''
+            for (let k = 0; k < Object.values(temp['cart']).length; k++) {
+                orders += Object.keys(temp['cart'][k])[0] + ","
+                $('#orderTable').prepend(displayList(Object.keys(temp['cart'][k])[0], Object.values(temp['cart'][k])[0]));
+            }
+            document.getElementById("deneme2").attributes[3].value = orders
+        } else {
+            document.getElementById("deneme").attributes[2].value = "reset"
+        }
+        
+
+        function clearCart() {
+            localStorage.removeItem("cart")
+            localStorage.removeItem("count")
+            localStorage.removeItem("total_price")
+            $("th").remove(".removable")
+        }
+
+        function displayList(a, b) {
+            var output = "" 
+            output += '<tr class="removable">'+ '<td>' + '<h4 class="ui image header">' +
+                    '<div class="content">'+a+'</div>'
+                    + '</h4>' + '</td>' + '<td>' + b + ' ₺' + '</td>' + '</tr>'
+            return output
+        }
+
+        setTimeout(function() {document.getElementById('message_container').style.display = "none"}, 3000)
+    </script>
 {% endblock content %}
